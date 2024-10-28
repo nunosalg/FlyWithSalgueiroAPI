@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlyWithSalgueiroAPI", "FlyWithSalgueiroAPI\FlyWithSalgueiroAPI.csproj", "{CADB9F45-C0B4-4474-B567-62F295ECF49B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CADB9F45-C0B4-4474-B567-62F295ECF49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CADB9F45-C0B4-4474-B567-62F295ECF49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CADB9F45-C0B4-4474-B567-62F295ECF49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CADB9F45-C0B4-4474-B567-62F295ECF49B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {047527F8-3006-45C8-B0D6-A02EEA463F55}
+	EndGlobalSection
+EndGlobal
