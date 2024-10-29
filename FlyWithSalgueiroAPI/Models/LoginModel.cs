@@ -2,7 +2,7 @@
 
 namespace FlyWithSalgueiroAPI.Models
 {
-    public class LoginViewModel
+    public class LoginModel
     {
         [Required]
         [EmailAddress]

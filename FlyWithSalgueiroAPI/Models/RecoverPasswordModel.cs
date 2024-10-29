@@ -2,7 +2,7 @@
 
 namespace FlyWithSalgueiroAPI.Models
 {
-    public class RecoverPasswordViewModel
+    public class RecoverPasswordModel
     {
         [Required]
         [EmailAddress]

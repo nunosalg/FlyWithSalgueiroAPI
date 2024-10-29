@@ -2,7 +2,7 @@
 
 namespace FlyWithSalgueiroAPI.Models
 {
-    public class ResetPasswordViewModel
+    public class ResetPasswordModel
     {
         [Required]
         public string? Email { get; set; }

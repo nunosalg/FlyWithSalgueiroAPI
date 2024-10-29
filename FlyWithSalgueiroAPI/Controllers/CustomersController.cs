@@ -34,7 +34,7 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Register([FromBody] RegisterNewUserViewModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterUserModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(model.Email);
             if (user != null)
@@ -104,7 +104,7 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(model.Email);
             if (user == null || !await _userHelper.CheckPasswordAsync(user, model.Password))
@@ -196,7 +196,7 @@ namespace FlyWithSalgueiroAPI.Controllers
                 return NotFound("User not found");
             }
 
-            var model = new ChangeUserViewModel()
+            var model = new UpdateUserModel()
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -209,7 +209,7 @@ namespace FlyWithSalgueiroAPI.Controllers
 
         [HttpPost("UpdateUserInfo")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> UpdateUserInfo(ChangeUserViewModel model)
+        public async Task<IActionResult> UpdateUserInfo(UpdateUserModel model)
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
@@ -229,7 +229,7 @@ namespace FlyWithSalgueiroAPI.Controllers
 
         [HttpPost("ChangePassword")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
@@ -249,7 +249,7 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpPost("TokenToResetPassword")]
-        public async Task<IActionResult> GetTokenToResetPassword(RecoverPasswordViewModel model)
+        public async Task<IActionResult> GetTokenToResetPassword(RecoverPasswordModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(model.Email);
             if (user == null)
@@ -274,7 +274,7 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(model.Email);
             if (user == null)

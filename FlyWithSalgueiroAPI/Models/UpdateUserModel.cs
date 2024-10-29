@@ -2,7 +2,7 @@
 
 namespace FlyWithSalgueiroAPI.Models
 {
-    public class RegisterNewUserViewModel
+    public class UpdateUserModel
     {
         [Required]
         [Display(Name = "First Name")]
@@ -19,19 +19,6 @@ namespace FlyWithSalgueiroAPI.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = false)]
         public DateTime BirthDate { get; set; }
 
-
-        [Required]
-        [DataType(DataType.EmailAddress)]
-        public string? Email { get; set; }
-
-
-        [Required]
-        [MinLength(6)]
-        public string? Password { get; set; }
-
-
-        [Required]
-        [Compare("Password")]
-        public string? Confirm { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 }

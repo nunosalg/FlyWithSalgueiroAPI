@@ -2,7 +2,7 @@
 
 namespace FlyWithSalgueiroAPI.Models
 {
-    public class ChangePasswordViewModel
+    public class ChangePasswordModel
     {
         [Required]
         [Display(Name = "Current Password")]
