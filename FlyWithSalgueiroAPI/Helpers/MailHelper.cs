@@ -36,8 +36,6 @@ namespace FlyWithSalgueiroAPI.Helpers
             {
                 using (var client = new SmtpClient())
                 {
-                    //client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
                     await client.ConnectAsync(smtp, int.Parse(port), SecureSocketOptions.StartTls);
                     await client.AuthenticateAsync(from, password);
                     await client.SendAsync(message);

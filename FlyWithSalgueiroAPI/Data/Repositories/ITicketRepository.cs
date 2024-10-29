@@ -10,7 +10,7 @@ namespace FlyWithSalgueiroAPI.Data.Repositories
 
         IQueryable<Ticket> GetTicketsByUserEmail(string userEmail);
 
-        IQueryable GetTicketsHistoryByUser(string userId);
+        IQueryable GetTicketsHistoryByUser(string email);
 
         Task<bool> HasTicketsByUserAsync(string userId);
 

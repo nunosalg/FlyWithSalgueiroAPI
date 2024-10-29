@@ -1,4 +1,6 @@
-﻿namespace FlyWithSalgueiroAPI.Helpers
+﻿using static System.Net.WebRequestMethods;
+
+namespace FlyWithSalgueiroAPI.Helpers
 {
     public class ImageHelper : IImageHelper
     {
@@ -9,8 +11,9 @@
 
             string path = Path.Combine(
                 Directory.GetCurrentDirectory(),
-                $"images\\{folder}",
-                file);
+                $"wwwroot\\images\\{folder}",
+                file
+            );
 
             using (FileStream stream = new FileStream(path, FileMode.Create))
             {

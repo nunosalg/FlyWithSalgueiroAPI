@@ -1,7 +1,9 @@
-﻿using FlyWithSalgueiroAPI.Helpers;
+﻿using FlyWithSalgueiroAPI.Data.Entities;
+using FlyWithSalgueiroAPI.Helpers;
 using FlyWithSalgueiroAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -29,6 +31,76 @@ namespace FlyWithSalgueiroAPI.Controllers
             _imageHelper = imageHelper;
             _mailHelper = mailHelper;
             _configuration = configuration;
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Register([FromBody] RegisterNewUserViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.Email);
+            if (user != null)
+            {
+                return BadRequest("There is already a user with this email.");
+            }
+
+            if (model.BirthDate.AddYears(18) > DateTime.Now)
+            {
+                return BadRequest("The user must be at least 18 years old to register.");
+            }
+
+            user = new User
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                UserName = model.Email,
+                BirthDate = model.BirthDate,
+                Role = "Customer"
+            };
+
+            var result = await _userHelper.AddUserAsync(user, model.Password);
+            if (result != IdentityResult.Success)
+            {
+                return BadRequest("Couldn't register user.");
+            }
+
+            await _userHelper.AddUserToRoleAsync(user, "Customer");
+
+            string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+
+            string? tokenLink = Url.Action("ConfirmEmail", "Customers", new
+            {
+                userid = user.Id,
+                token = myToken
+            }, protocol: HttpContext.Request.Scheme);
+
+            Response response = await _mailHelper.SendEmailAsync(model.Email, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                        $"To finalize the register, " +
+                        $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+
+            if (response.IsSuccess)
+            {
+                return Ok("Check your email to finalize the register.");
+            }
+
+            return BadRequest("Couldn't register user.");
+        }
+
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var user = await _userHelper.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return Ok("Email confirmed successfully.");
+            }
+
+            return BadRequest("Invalid email confirmation token.");
         }
 
         [HttpPost("[action]")]
@@ -68,8 +140,7 @@ namespace FlyWithSalgueiroAPI.Controllers
             });
         }
 
-        [Authorize]
-        [HttpPost("uploaduserimage")]
+        [HttpPost("UploadUserImage")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UploadUserImage(IFormFile image)
         {
@@ -86,7 +157,7 @@ namespace FlyWithSalgueiroAPI.Controllers
                 user.AvatarUrl = await _imageHelper.UploadImageAsync(image, "users");
 
                 var response = await _userHelper.UpdateUserAsync(user);
-                if(response.Succeeded)
+                if (response.Succeeded)
                 {
                     return Ok("Image uploaded successfully.");
                 }
@@ -96,8 +167,7 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
 
-        [Authorize]
-        [HttpGet("userimage")]
+        [HttpGet("UserImage")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetUserImage()
         {
@@ -114,8 +184,7 @@ namespace FlyWithSalgueiroAPI.Controllers
             return Ok(userImage);
         }
 
-        [Authorize]
-        [HttpGet("userinfo")]
+        [HttpGet("UserInfo")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetUserInfo()
         {
@@ -134,12 +203,11 @@ namespace FlyWithSalgueiroAPI.Controllers
                 BirthDate = user.BirthDate,
                 PhoneNumber = user.PhoneNumber,
             };
-            
+
             return Ok(model);
         }
 
-        [Authorize]
-        [HttpPost("updateuserinfo")]
+        [HttpPost("UpdateUserInfo")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UpdateUserInfo(ChangeUserViewModel model)
         {
@@ -155,12 +223,11 @@ namespace FlyWithSalgueiroAPI.Controllers
             user.LastName = model.LastName;
             user.BirthDate = model.BirthDate;
             user.PhoneNumber = model.PhoneNumber;
-            
+
             return Ok(user);
         }
 
-        [Authorize]
-        [HttpPost("changepassword")]
+        [HttpPost("ChangePassword")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
@@ -181,7 +248,7 @@ namespace FlyWithSalgueiroAPI.Controllers
             return BadRequest("Couldn't change password.");
         }
 
-        [HttpPost("tokentoresetpassword")]
+        [HttpPost("TokenToResetPassword")]
         public async Task<IActionResult> GetTokenToResetPassword(RecoverPasswordViewModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(model.Email);
@@ -191,7 +258,7 @@ namespace FlyWithSalgueiroAPI.Controllers
             }
 
             var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
-            if (myToken == null) 
+            if (myToken == null)
             {
                 return BadRequest("Couldn't generate token.");
             }
@@ -206,7 +273,7 @@ namespace FlyWithSalgueiroAPI.Controllers
             return BadRequest("Something went wrong...");
         }
 
-        [HttpPost("resetpassword")]
+        [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(model.Email);

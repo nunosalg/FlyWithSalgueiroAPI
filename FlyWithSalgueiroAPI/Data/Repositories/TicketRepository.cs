@@ -36,7 +36,7 @@ namespace FlyWithSalgueiroAPI.Data.Repositories
                 .Where(t => t.TicketBuyer.Email == userEmail && t.Flight.DepartureDateTime > DateTime.Now);
         }
 
-        public IQueryable GetTicketsHistoryByUser(string userId)
+        public IQueryable GetTicketsHistoryByUser(string email)
         {
             return _context.Tickets
                 .Include(t => t.Flight)
@@ -45,7 +45,7 @@ namespace FlyWithSalgueiroAPI.Data.Repositories
                 .ThenInclude(f => f.Destination)
                 .Include(t => t.Flight)
                 .ThenInclude(t => t.Aircraft)
-                .Where(t => t.TicketBuyer.Id == userId && t.Flight.DepartureDateTime < DateTime.Now);
+                .Where(t => t.TicketBuyer.Email == email && t.Flight.DepartureDateTime < DateTime.Now);
         }
 
         public async Task<bool> PassengerAlreadyHasTicketInFlight(int flightId, string passengerId)

@@ -1,4 +1,5 @@
 ﻿using FlyWithSalgueiroAPI.Data.Repositories;
+using FlyWithSalgueiroAPI.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,18 +13,25 @@ namespace FlyWithSalgueiroAPI.Controllers
     public class CustomerFlightsController : ControllerBase
     {
         private readonly ITicketRepository _ticketRepository;
+        private readonly ITicketHistoryRepository _ticketHistoryRepository;
+        private readonly IUserHelper _userHelper;
 
-        public CustomerFlightsController(ITicketRepository ticketRepository)
+        public CustomerFlightsController(
+            ITicketRepository ticketRepository,
+            ITicketHistoryRepository ticketHistoryRepository,
+            IUserHelper userHelper)
         {
             _ticketRepository = ticketRepository;
+            _ticketHistoryRepository = ticketHistoryRepository;
+            _userHelper = userHelper;
         }
 
-        [HttpGet("customerflights")]
-        public IActionResult GetCustomerFlights()
+        [HttpGet("FutureFlights")]
+        public IActionResult GetFutureFlights()
         {
             try
             {
-                var emailClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                var emailClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
                 var userEmail = emailClaim?.Value;
 
                 if (string.IsNullOrEmpty(userEmail))
@@ -38,12 +46,10 @@ namespace FlyWithSalgueiroAPI.Controllers
                         t.PassengerName,
                         t.PassengerId,
                         t.PassengerBirthDate,
-                        t.TicketBuyer,
                         t.Seat,
                         t.Price,
                         Flight = new
                         {
-                            t.Flight.Id,
                             t.Flight.FlightNumber,
                             t.Flight.DepartureDateTime,
                             FlightDuration = t.Flight.FlightDuration.ToString(),
@@ -63,6 +69,34 @@ namespace FlyWithSalgueiroAPI.Controllers
                 }
 
                 return Ok(tickets);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("FlightsHistory")]
+        public IActionResult GetFlightsHistory()
+        {
+            try
+            {
+                var emailClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                var userEmail = emailClaim?.Value;
+
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return NotFound("User not found.");
+                }
+
+                var ticketsHistory = _ticketHistoryRepository.GetByUserEmail(userEmail).ToList();
+
+                if (ticketsHistory == null || ticketsHistory.Count == 0)
+                {
+                    return NotFound("No past flights have been found for this user.");
+                }
+
+                return Ok(ticketsHistory);
             }
             catch (Exception ex)
             {

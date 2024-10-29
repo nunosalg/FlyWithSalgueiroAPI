@@ -90,6 +90,8 @@ namespace FlyWithSalgueiroAPI
 
             // Add services to the container.
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+            builder.Services.AddScoped<ITicketHistoryRepository, TicketHistoryRepository>();
+            builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -104,6 +106,8 @@ namespace FlyWithSalgueiroAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
