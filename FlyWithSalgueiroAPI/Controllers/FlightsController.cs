@@ -1,5 +1,4 @@
-﻿using FlyWithSalgueiroAPI.Data.Entities;
-using FlyWithSalgueiroAPI.Data.Repositories;
+﻿using FlyWithSalgueiroAPI.Data.Repositories;
 using FlyWithSalgueiroAPI.Helpers;
 using FlyWithSalgueiroAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,7 +18,7 @@ namespace FlyWithSalgueiroAPI.Controllers
         private readonly ITicketHelper _ticketHelper;
 
         public FlightsController(
-            IFlightRepository flightRepository, 
+            IFlightRepository flightRepository,
             ITicketRepository ticketRepository,
             IUserHelper userHelper,
             ITicketHelper ticketHelper)
@@ -44,11 +43,11 @@ namespace FlyWithSalgueiroAPI.Controllers
                         f.FlightDuration,
                         f.Origin,
                         f.OriginAirport,
-                        f.Destination, 
+                        f.Destination,
                         f.DestinationAirport,
                         f.AvailableSeatsNumber,
                     });
-                    
+
                 if (flights == null)
                 {
                     return NotFound("No available flights found at the moment.");
@@ -68,7 +67,7 @@ namespace FlyWithSalgueiroAPI.Controllers
             try
             {
                 var flightsResult = await _flightRepository.GetFlightsByCriteriaAsync(originId, destinationId, departure);
-                    
+
                 var flights = flightsResult.ToList()
                     .Select(f => new
                     {
@@ -154,7 +153,6 @@ namespace FlyWithSalgueiroAPI.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-            
         }
     }
 }

@@ -12,17 +12,6 @@ namespace FlyWithSalgueiroAPI.Data.Repositories
             _context = context;
         }
 
-        public async Task<Ticket?> GetByIdWithFlightDetailsAsync(int? id)
-        {
-            return await _context.Tickets
-                .Include(t => t.Flight)
-                .ThenInclude(f => f.Origin)
-                .Include(t => t.Flight)
-                .ThenInclude(f => f.Destination)
-                .Include(t => t.TicketBuyer)
-                .FirstOrDefaultAsync(t => t.Id == id);
-        }
-
         public IQueryable<Ticket> GetTicketsByUserEmail(string userEmail)
         {
             return _context.Tickets

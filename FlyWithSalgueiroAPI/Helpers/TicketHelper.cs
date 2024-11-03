@@ -14,6 +14,7 @@ namespace FlyWithSalgueiroAPI.Helpers
             _flightRepository = flightRepository;
             _userHelper = userHelper;
         }
+
         public decimal TicketPrice(Flight flight)
         {
             decimal costPerMinute = 0.5m;

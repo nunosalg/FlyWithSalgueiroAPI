@@ -1,6 +1,4 @@
-﻿using static System.Net.WebRequestMethods;
-
-namespace FlyWithSalgueiroAPI.Helpers
+﻿namespace FlyWithSalgueiroAPI.Helpers
 {
     public class ImageHelper : IImageHelper
     {

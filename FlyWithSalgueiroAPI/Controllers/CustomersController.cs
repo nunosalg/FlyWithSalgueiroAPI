@@ -66,6 +66,10 @@ namespace FlyWithSalgueiroAPI.Controllers
             await _userHelper.AddUserToRoleAsync(user, "Customer");
 
             string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            if (myToken == null)
+            {
+                return BadRequest("Couldn't generate token.");
+            } 
 
             string? tokenLink = Url.Action("ConfirmEmail", "Customers", new
             {
@@ -82,7 +86,7 @@ namespace FlyWithSalgueiroAPI.Controllers
                 return Ok("Check your email to finalize the register.");
             }
 
-            return BadRequest("Couldn't register user.");
+            return BadRequest("Failed to send email with token.");
         }
 
         [HttpGet("ConfirmEmail")]
@@ -207,7 +211,7 @@ namespace FlyWithSalgueiroAPI.Controllers
             return Ok(model);
         }
 
-        [HttpPost("UpdateUserInfo")]
+        [HttpPut("UpdateUserInfo")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UpdateUserInfo(UpdateUserModel model)
         {
@@ -224,7 +228,13 @@ namespace FlyWithSalgueiroAPI.Controllers
             user.BirthDate = model.BirthDate;
             user.PhoneNumber = model.PhoneNumber;
 
-            return Ok(user);
+            var result = await _userHelper.UpdateUserAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok("User information updated successfully.");
+            }
+
+            return BadRequest("Couldn't update user information.");
         }
 
         [HttpPost("ChangePassword")]
@@ -270,7 +280,7 @@ namespace FlyWithSalgueiroAPI.Controllers
                 return Ok("The token to recover your password has been sent to your email.");
             }
 
-            return BadRequest("Something went wrong...");
+            return BadRequest("Failed to send email with token.");
         }
 
         [HttpPost("ResetPassword")]

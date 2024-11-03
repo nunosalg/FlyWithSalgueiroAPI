@@ -19,6 +19,7 @@ namespace FlyWithSalgueiroAPI.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = false)]
         public DateTime BirthDate { get; set; }
 
+
         public string? PhoneNumber { get; set; }
     }
 }

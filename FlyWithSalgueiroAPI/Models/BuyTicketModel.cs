@@ -12,6 +12,7 @@ namespace FlyWithSalgueiroAPI.Models
         [Display(Name = "Select Seat")]
         public string? Seat { get; set; }
 
+
         [Required]
         [Display(Name = "Passenger Name")]
         public string? PassengerName { get; set; }
