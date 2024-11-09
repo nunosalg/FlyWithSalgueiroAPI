@@ -30,6 +30,9 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpGet("AvailableFlights")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetAvailableFlights()
         {
             try
@@ -62,6 +65,9 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpGet("SearchFlights")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SearchFlights(int? originId, int? destinationId, DateTime? departure)
         {
             try
@@ -96,26 +102,39 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpGet("AvailableSeats")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAvailableSeats(int flightId)
         {
-            var flight = await _flightRepository.GetByIdAsync(flightId);
-            if (flight == null)
+            try
             {
-                return NotFound("Flight not found.");
+                var flight = await _flightRepository.GetByIdAsync(flightId);
+                if (flight == null)
+                {
+                    return NotFound("Flight not found.");
+                }
+
+                var availableSeatsDto = new AvailableSeatsDto
+                {
+                    FlightId = flight.Id,
+                    AvailableSeats = flight.AvailableSeats
+                };
+
+                return Ok(availableSeatsDto);
             }
-
-            var availableSeatsDto = new AvailableSeatsDto
+            catch (Exception ex)
             {
-                FlightId = flight.Id,
-                AvailableSeats = flight.AvailableSeats
-            };
-
-            return Ok(availableSeatsDto);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
-
 
         [HttpPost("[action]")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> BuyTicket(BuyTicketModel model)
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;

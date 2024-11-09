@@ -27,6 +27,9 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpGet("FutureFlights")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetFutureFlights()
         {
             try
@@ -48,18 +51,15 @@ namespace FlyWithSalgueiroAPI.Controllers
                         t.PassengerBirthDate,
                         t.Seat,
                         t.Price,
-                        Flight = new
-                        {
-                            t.Flight.FlightNumber,
-                            t.Flight.DepartureDateTime,
-                            FlightDuration = t.Flight.FlightDuration.ToString(),
-                            t.Flight.ArrivalTime,
-                            Origin = t.Flight.Origin.Name,
-                            t.Flight.OriginAirport,
-                            Destination = t.Flight.Destination.Name,
-                            t.Flight.DestinationAirport,
-                            Aircraft = t.Flight.Aircraft.Data,
-                        }
+                        FlightNumber = t.Flight.FlightNumber,
+                        DepartureDateTime = t.Flight.DepartureDateTime,
+                        FlightDuration = t.Flight.FlightDuration,
+                        ArrivalTime = t.Flight.ArrivalTime,
+                        Origin = t.Flight.Origin.Name,
+                        OriginAirport = t.Flight.OriginAirport,
+                        Destination = t.Flight.Destination.Name,
+                        DestinationAirport = t.Flight.DestinationAirport,
+                        Aircraft = t.Flight.Aircraft.Data,
                     })
                     .ToList();
 
@@ -77,6 +77,9 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpGet("FlightsHistory")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetFlightsHistory()
         {
             try

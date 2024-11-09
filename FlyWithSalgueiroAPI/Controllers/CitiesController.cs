@@ -1,4 +1,5 @@
-﻿using FlyWithSalgueiroAPI.Data.Repositories;
+﻿using FlyWithSalgueiroAPI.Data.Entities;
+using FlyWithSalgueiroAPI.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlyWithSalgueiroAPI.Controllers
@@ -15,11 +16,14 @@ namespace FlyWithSalgueiroAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetCities()
         {
             try
             {
-                var cities = _cityRepository.GetAll();
+                var cities = (IEnumerable<City>)_cityRepository.GetAll();
                 if (cities == null)
                 {
                     return NotFound("No cities found at the moment.");

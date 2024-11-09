@@ -25,6 +25,7 @@ namespace FlyWithSalgueiroAPI.Data.Repositories
         public async Task<IEnumerable<Flight>> GetFlightsByCriteriaAsync(int? originId, int? destinationId, DateTime? departureDate)
         {
             var query = _context.Flights
+                .Where(f => f.DepartureDateTime >= DateTime.UtcNow)
                 .Include(f => f.Aircraft)
                 .Include(f => f.Origin)
                 .Include(f => f.Destination)
