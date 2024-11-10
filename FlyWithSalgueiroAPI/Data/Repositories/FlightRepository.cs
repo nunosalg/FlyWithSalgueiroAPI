@@ -58,5 +58,16 @@ namespace FlyWithSalgueiroAPI.Data.Repositories
                 .Include(f => f.Destination)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<Flight?> GetByIdWithUsersAircraftsAndCitiesAsync(int id)
+        {
+            return await _context.Flights
+                .Include(f => f.User)
+                .Include(f => f.Aircraft)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
+                .Include(f => f.TicketsList)
+                .FirstOrDefaultAsync(f => f.Id == id);
+        }
     }
 }

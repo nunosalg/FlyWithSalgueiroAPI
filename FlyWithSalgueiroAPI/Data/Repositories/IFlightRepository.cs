@@ -9,5 +9,7 @@ namespace FlyWithSalgueiroAPI.Data.Repositories
         Task<IEnumerable<Flight>> GetFlightsByCriteriaAsync(int? originId, int? destinationId, DateTime? departureDate);
 
         Task<Flight?> GetByIdWithAircraftAndCities(int flightId);
+
+        Task<Flight?> GetByIdWithUsersAircraftsAndCitiesAsync(int id);
     }
 }

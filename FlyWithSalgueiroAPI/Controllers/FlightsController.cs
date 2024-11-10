@@ -115,13 +115,33 @@ namespace FlyWithSalgueiroAPI.Controllers
                     return NotFound("Flight not found.");
                 }
 
-                var availableSeatsDto = new AvailableSeatsDto
-                {
-                    FlightId = flight.Id,
-                    AvailableSeats = flight.AvailableSeats
-                };
+                var availableSeats = flight.AvailableSeats;
 
-                return Ok(availableSeatsDto);
+                return Ok(availableSeats);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("TicketPrice")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetTicketPrice(int flightId)
+        {
+            try
+            {
+                var flight = await _flightRepository.GetByIdWithUsersAircraftsAndCitiesAsync(flightId);
+                if (flight == null)
+                {
+                    return NotFound("Flight not found.");
+                }
+
+                var ticketPrice = _ticketHelper.TicketPrice(flight);
+
+                return Ok(ticketPrice);
             }
             catch (Exception ex)
             {
@@ -166,7 +186,7 @@ namespace FlyWithSalgueiroAPI.Controllers
                 await _ticketRepository.CreateAsync(ticket);
                 await _flightRepository.UpdateAsync(flight);
 
-                return Ok("Ticket purchased successfully!");
+                return Ok(new { Message = "Ticket purchased successfully!" });
             }
             catch (Exception ex)
             {

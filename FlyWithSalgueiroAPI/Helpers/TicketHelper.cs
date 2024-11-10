@@ -40,7 +40,7 @@ namespace FlyWithSalgueiroAPI.Helpers
                 PassengerId = model.PassengerId,
                 PassengerName = model.PassengerName,
                 PassengerBirthDate = model.PassengerBirthDate,
-                Price = TicketPrice(flight),
+                Price = model.Price,
             };
         }
     }

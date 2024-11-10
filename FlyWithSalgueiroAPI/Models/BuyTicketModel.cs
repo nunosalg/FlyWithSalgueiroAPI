@@ -27,5 +27,7 @@ namespace FlyWithSalgueiroAPI.Models
         [Required]
         [Display(Name = "Passenger Birthdate")]
         public DateTime PassengerBirthDate { get; set; }
+
+        public decimal Price { get; set; }
     }
 }
